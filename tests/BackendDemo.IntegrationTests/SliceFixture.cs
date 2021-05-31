@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using AutoMapper;
 using BackendDemo.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,11 @@ namespace BackendDemo.IntegrationTests
         public BackendDemoContext GetDbContext()
         {
             return _provider.GetRequiredService<BackendDemoContext>();
+        }
+
+        public IMapper GetMapper()
+        {
+            return _provider.GetRequiredService<IMapper>();
         }
 
         public void Dispose()
