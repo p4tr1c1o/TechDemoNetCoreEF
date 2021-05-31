@@ -25,3 +25,16 @@ jobs:
       run: dotnet publish --configuration Release --no-restore -o ./publish
     - name: Zip
       run: zip -r deploy.zip ./publish
+    - name: Get timestamp
+      uses: gerred/actions/current-time@master
+      id: current-time
+    - name: Beanstalk Deploy
+      uses: einaregilsson/beanstalk-deploy@v17
+      with:
+        aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
+        aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        region: "sa-east-1"
+        application_name: "mox-tech-demo"
+        environment_name: "Moxtechdemo-env"
+        version_label: "mox-tech-demo-new-${{ steps.format-time.outputs.replaced }}"
+        deployment_package: deploy.zip
