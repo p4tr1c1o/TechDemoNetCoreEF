@@ -23,11 +23,14 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Publish
       run: dotnet publish --configuration Release --no-restore -o ./publish
+    
     - name: Zip
-      run: zip -r deploy.zip ./publish
+      run: zip -r deploy.zip ./publish/
+    
     - name: Get timestamp
       uses: gerred/actions/current-time@master
       id: current-time
+    
     - name: Beanstalk Deploy
       uses: einaregilsson/beanstalk-deploy@v17
       with:
@@ -36,5 +39,5 @@ jobs:
         region: "sa-east-1"
         application_name: "mox-tech-demo"
         environment_name: "Moxtechdemo-env"
-        version_label: "mox-tech-demo-new-${{ steps.format-time.outputs.replaced }}"
+        version_label: "mox-tech-demo-new-${{ github.run_id }}"
         deployment_package: deploy.zip
