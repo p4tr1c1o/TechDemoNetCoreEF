@@ -37,7 +37,7 @@ namespace BackendDemo.Application.Productos.Queries
             {
                 var result = context.Productos.AsNoTracking().ToList();
 
-                await context.SaveChangesAsync();
+                await Task.CompletedTask;
 
                 return new GetProductosResponse
                 {

@@ -2,46 +2,41 @@ name: .NET Core Build & Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    
-    - name: Tests
-      run: dotnet test --verbosity normal --no-restore
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-    - name: Publish
-      run: dotnet publish --configuration Release --no-restore -o ./publish
-    
-    - name: Zip
-      run: cd publish && zip -r "../deploy.zip" .
-    
-    - name: Get timestamp
-      uses: gerred/actions/current-time@master
-      id: current-time
-    
-    - name: Beanstalk Deploy
-      uses: einaregilsson/beanstalk-deploy@v17
-      with:
-        aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
-        aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-        region: "sa-east-1"
-        application_name: "mox-tech-demo"
-        environment_name: "Moxtechdemo-env"
-        version_label: "mox-tech-demo-new-${{ github.run_id }}"
-        deployment_package: deploy.zip
+      - name: Tests
+        run: dotnet test --verbosity normal --no-restore
+
+      - name: Publish
+        run: dotnet publish --configuration Release --no-restore -o ./publish
+
+      - name: Zip
+        run: cd publish && zip -r "../deploy.zip" .
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v17
+        with:
+          aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          region: "sa-east-1"
+          application_name: "mox-tech-demo"
+          environment_name: "Moxtechdemo-env"
+          version_label: "mox-tech-demo-new-${{ github.run_id }}"
+          deployment_package: deploy.zip
