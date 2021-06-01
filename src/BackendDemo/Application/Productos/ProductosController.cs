@@ -52,11 +52,4 @@ namespace BackendDemo.Application.Productos
 
     }
 
-    [Route("")]
-    public class HomeController : Controller
-    {
-        public IActionResult Index() { 
-            return Ok();
-        }
-    }
 }
